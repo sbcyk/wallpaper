@@ -2,8 +2,8 @@
 	<view class="homeLayout pageBg">
 		<view class="banner">
 			<swiper indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#fff" autoplay circular>
-				<swiper-item v-for="item in imageList">
-					<image :src="item" mode="aspectFill"></image>
+				<swiper-item v-for="item in 3">
+					<image src="../../common/images/banner2.jpg" mode="aspectFill"></image>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-	const imageList = ['../../common/images/banner1.jpg', '../../common/images/banner2.jpg', '../../common/images/banner3.jpg']
+	
 </script>
 
 <style lang="scss" scoped>

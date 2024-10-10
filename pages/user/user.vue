@@ -14,17 +14,29 @@
 
 		<view class="section">
 			<view class="list">
-				<view class="row" v-for="item in list1" :key="item.name">
+				<navigator url="/pages/classlist/classlist" class="row">
 					<view class="left">
-						<uni-icons :type="item.icon" size="20"></uni-icons>
-						<view class="text">{{ item.value }}</view>
+						<uni-icons type="download-filled" size="20"></uni-icons>
+						<view class="text">我的下载</view>
 					</view>
 
 					<view class="right">
-						<view class="text" v-if="item.name !== 'service'">33</view>
+						<view class="text">33</view>
 						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 					</view>
-				</view>
+				</navigator>
+				
+				<navigator url="/pages/classlist/classlist" class="row">
+					<view class="left">
+						<uni-icons type="star-filled" size="20"></uni-icons>
+						<view class="text">我的评分</view>
+					</view>
+				
+					<view class="right">
+						<view class="text">33</view>
+						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
+					</view>
+				</navigator>
 				
 				<view class="row">
 					<view class="left">
@@ -62,16 +74,11 @@
 		</view>
 	</view>
 </template>
-'我的下载', '我的评分', '联系客服'
 <script setup>
 	import {
 		ref
 	} from 'vue';
-	const list1 = ref([
-		{name: 'download',value: '我的下载',icon: 'download-filled'},
-		{name: 'eva',value: '我的评分',icon: 'star-filled'},
-		// {name: 'service',value: '联系客服',icon: 'chatboxes-filled'}
-	])
+	
 	const list2 = ref([
 		{name: 'sub',value: '订阅更新',icon: 'notification-filled'},
 		{name: 'problem',value: '常见问题',icon: 'flag-filled'},

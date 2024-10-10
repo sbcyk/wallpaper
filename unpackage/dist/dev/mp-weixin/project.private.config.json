@@ -8,8 +8,15 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/index/index",
-          "pathName": "pages/index/index",
+          "name": "pages/preview/preview",
+          "pathName": "pages/preview/preview",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "pages/classlist/classlist",
+          "pathName": "pages/classlist/classlist",
           "query": "",
           "launchMode": "default",
           "scene": null
