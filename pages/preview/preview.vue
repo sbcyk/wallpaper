@@ -102,7 +102,14 @@
 					</view>
 				</view>
 				
+				<view class="content">
+					<uni-rate v-model="userScore" allowHalf :is-mask-click="false" />
+					<text class="text">{{ userScore }}分</text>
+				</view>
 				
+				<view class="footer">
+					<button :disabled="!userScore" @click="submitScore" size="mini" plain>确认评分</button>
+				</view>
 			</view>
 		</uni-popup>
 	</view>
@@ -113,7 +120,8 @@ import { ref } from 'vue';
 
 const maskState = ref(true);
 const infoPopup = ref(null);
-const scorePopup = ref(null)
+const scorePopup = ref(null);
+const userScore = ref(0);
 
 
 // 点击info弹窗
@@ -132,6 +140,11 @@ const clickScore = () => {
 // 关闭评分弹窗
 const clickScoreClose = () => {
 	scorePopup.value.close();
+}
+
+const submitScore = () => {
+	console.log(userScore.value)
+	// setTimeout(clickScoreClose(), 1000);
 }
 
 // 切换遮罩状态
@@ -222,27 +235,27 @@ const maskChange = () => {
 		}
 	}
 	
+	.popHeader {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		
+		.title {
+			color:  $text-font-color-2;
+			font-size: 26rpx;
+		}
+		
+		.close {
+			// border: 1px solid red;
+			padding: 6rpx;
+		}
+	}
+	
 	.infoPopup {
 		background: #fff;
 		padding: 30rpx;
 		border-radius: 30rpx 30rpx 0 0;
 		overflow: hidden;
-		
-		.popHeader {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			
-			.title {
-				color: $text-font-color-2;
-				font-size: 26rpx;
-			}
-			
-			.close {
-				// border: 1px solid red;
-				padding: 6rpx;
-			}
-		}
 		
 		scroll-view {
 			max-height: 60vh;
@@ -308,6 +321,35 @@ const maskChange = () => {
 					line-height: 1.6em;
 				}
 			}
+		}
+	}
+	
+	.scorePopup {
+		background: #fff;
+		padding: 30rpx;
+		width: 70vw;
+		border-radius: 30rpx;
+		
+		.content {
+			padding: 30rpx 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			
+			.text {
+				color: #FFCA3E;
+				padding-left: 10rpx;
+				width: 80rpx;
+				line-height: 1em;
+				text-align: right;
+			}
+		}
+		
+		.footer {
+			padding: 10rpx 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 	}
 }	       
