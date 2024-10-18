@@ -5,7 +5,7 @@
 			
 			<view class="titleBar" 
 			:style="{height: getTitleBarHeight() + 'px', marginLeft: getLeftIconLeft() + 'px'}">
-				<view class="title">标题</view>
+				<view class="title">{{ title }}</view>
 				<view class="search">
 					<uni-icons class="icon" type="search" color="#888" size="18"></uni-icons>
 					<text class="text">搜索</text>
@@ -23,10 +23,13 @@
 import { ref } from 'vue';
 import {getStatusBarHeight, getTitleBarHeight, getNavBarHeight, getLeftIconLeft} from '@/utils/system.js'
 
-// let {top, height} = uni.getMenuButtonBoundingClientRect();
-// console.log({top, height})
-// let titleBarHeight = ref((top - statusBarHeight.value) * 2 + height)
-
+defineProps({
+	title: {
+		type: String,
+		default: "壁纸"
+	}
+})
+	
 </script>
 
 <style lang="scss" scoped>
