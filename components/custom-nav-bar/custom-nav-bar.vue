@@ -1,9 +1,9 @@
 <template>
 	<view class="layout">
 		<view class="navBar">
-			<view class="stateBar" :style="{height: statusBarHeight + 'px'}"></view>
+			<view class="stateBar" :style="{height: getStatusBarHeight() + 'px'}"></view>
 			
-			<view class="titleBar" :style="{height: titleBarHeight + 'px'}">
+			<view class="titleBar" :style="{height: getTitleBarHeight() + 'px'}">
 				<view class="title">标题</view>
 				<view class="search">
 					<uni-icons class="icon" type="search" color="#888" size="18"></uni-icons>
@@ -12,7 +12,7 @@
 			</view>
 		</view>
 		
-		<view class="fill" :style="{height: statusBarHeight + titleBarHeight + 'px'}">
+		<view class="fill" :style="{height: getNavBarHeight() + 'px'}">
 			<!-- 填充区域将状态栏和标题栏的位置填充，避免绝对定位的标题栏盖住下方内容 -->
 		</view>
 	</view>
@@ -20,12 +20,11 @@
 
 <script setup>
 import { ref } from 'vue';
-let SYSTEM_INFO = uni.getSystemInfoSync();
-let statusBarHeight = ref(SYSTEM_INFO.statusBarHeight)
+import {getStatusBarHeight, getTitleBarHeight, getNavBarHeight} from '@/utils/system.js'
 
-let {top, height} = uni.getMenuButtonBoundingClientRect();
+// let {top, height} = uni.getMenuButtonBoundingClientRect();
 // console.log({top, height})
-let titleBarHeight = ref((top - statusBarHeight.value) * 2 + height)
+// let titleBarHeight = ref((top - statusBarHeight.value) * 2 + height)
 
 </script>
 
