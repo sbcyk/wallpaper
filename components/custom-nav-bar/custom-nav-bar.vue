@@ -3,7 +3,8 @@
 		<view class="navBar">
 			<view class="stateBar" :style="{height: getStatusBarHeight() + 'px'}"></view>
 			
-			<view class="titleBar" :style="{height: getTitleBarHeight() + 'px'}">
+			<view class="titleBar" 
+			:style="{height: getTitleBarHeight() + 'px', marginLeft: getLeftIconLeft() + 'px'}">
 				<view class="title">标题</view>
 				<view class="search">
 					<uni-icons class="icon" type="search" color="#888" size="18"></uni-icons>
@@ -20,7 +21,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import {getStatusBarHeight, getTitleBarHeight, getNavBarHeight} from '@/utils/system.js'
+import {getStatusBarHeight, getTitleBarHeight, getNavBarHeight, getLeftIconLeft} from '@/utils/system.js'
 
 // let {top, height} = uni.getMenuButtonBoundingClientRect();
 // console.log({top, height})
