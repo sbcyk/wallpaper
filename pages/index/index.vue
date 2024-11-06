@@ -69,6 +69,10 @@
 	import {
 		ref
 	} from 'vue';
+	import {
+		apiGetBanner, apiGetDayRadom, apiGetNotice
+	} from '../../api/apis.js';
+
 
 	const bannerList = ref([])
 	const radomList = ref([])
@@ -82,46 +86,18 @@
 	}
 
 	const getBanner = async () => {
-		let res = await uni.request({
-			url: "https://tea.qingnian8.com/api/bizhi/homeBanner",
-			header: {
-				"access-key": "cykkey"
-			}
-		})
-		// console.log(res)
-		if (res.data.errCode === 0) {
-			bannerList.value = res.data.data
-		}
+		let res = await apiGetBanner();
+		bannerList.value = res.data.data
 	}
 
 	const getDayRadom = async () => {
-		let res = await uni.request({
-			url: "https://tea.qingnian8.com/api/bizhi/randomWall",
-			header: {
-				"access-key": "cykkey"
-			}
-		})
-		// console.log(res)
-		if (res.data.errCode === 0) {
-			radomList.value = res.data.data
-		}
+		let res = await apiGetDayRadom();
+		radomList.value = res.data.data
 	}
 
 	const getNotice = async () => {
-		let res = await uni.request({
-			url: "https://tea.qingnian8.com/api/bizhi/wallNewsList",
-			header: {
-				"access-key": "cykkey"
-			},
-			data: {
-				select: true
-				// pageSize: 3
-			}
-		})
-		console.log(res)
-		if (res.data.errCode === 0) {
-			notice.value = res.data.data
-		}
+		let res = await apiGetNotice();
+		notice.value = res.data.data
 	}
 
 	getBanner();
