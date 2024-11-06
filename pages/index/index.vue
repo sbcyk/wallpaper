@@ -17,7 +17,9 @@
 			</view>
 			<view class="center">
 				<swiper vertical autoplay interval="1500" duration="300" circular>
-					<swiper-item v-for="item in 4">文字内文字文字文字文字文字文字文字文字容</swiper-item>
+					<swiper-item v-for="item in 4">
+						<navigator url="/pages/notice/detail">文字内文字文字文字文字文字文字文字文字容</navigator>
+					</swiper-item>
 				</swiper>
 			</view>
 			<view class="right">
@@ -39,7 +41,7 @@
 			</common-title>
 			<view class="content">
 				<scroll-view scroll-x>
-					<view class="box" v-for="item in 8">
+					<view class="box" v-for="item in 8" @click="goPreview()">
 						<image src="../../common/images/preview_small.webp" mode="aspectFill"></image>
 					</view>
 				</scroll-view>
@@ -63,7 +65,11 @@
 </template>
 
 <script setup>
-	
+const goPreview = () => {
+	uni.navigateTo({
+		url: "/pages/preview/preview"
+	})
+}
 </script>
 
 <style lang="scss" scoped>

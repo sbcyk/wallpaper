@@ -2,7 +2,7 @@
 const SYSTEM_INFO = uni.getSystemInfoSync();
 
 // 状态栏高度
-export const getStatusBarHeight = () => SYSTEM_INFO.statusBarHeight || 0;
+export const getStatusBarHeight = () => SYSTEM_INFO.statusBarHeight || 10;
 
 // 标题栏高度（胶囊按钮 + 上下小边距）
 export const getTitleBarHeight = () => {
