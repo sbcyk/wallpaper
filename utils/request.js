@@ -4,7 +4,8 @@ export function request(config = {}) {
 	let {
 		url,
 		method = 'GET',
-		header = {}
+		header = {},
+		data = {}
 	} = config
 
 	url = BASE_URL + url;
@@ -15,9 +16,10 @@ export function request(config = {}) {
 			url,
 			method,
 			header,
+			data,
 			success: res => {
 				if (res.data.errCode === 0) {
-					resolve(res)
+					resolve(res.data)
 				} else if (res.data.errCode === 400) {
 					uni.showModal({
 						title: '错误提示',

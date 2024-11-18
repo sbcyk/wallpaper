@@ -53,13 +53,12 @@
 			<common-title>
 				<template #name>专题精选</template>
 				<template #custom>
-					<navigator url="" class="more">more</navigator>
-				</template>
+					<navigator url="" class="more">more</navigator>				</template>
 			</common-title>
 
 			<view class="content">
-				<theme-item v-for="item in 8"></theme-item>
-				<theme-item :isMore="true"></theme-item>
+				<theme-item v-for="item in classifyList" :key="item._id" :item="item"></theme-item>
+				<theme-item isMore></theme-item>
 			</view>
 		</view>
 	</view>
@@ -70,13 +69,14 @@
 		ref
 	} from 'vue';
 	import {
-		apiGetBanner, apiGetDayRadom, apiGetNotice
+		apiGetBanner, apiGetDayRadom, apiGetNotice, apiGetClassify
 	} from '../../api/apis.js';
 
 
 	const bannerList = ref([])
 	const radomList = ref([])
 	const notice = ref([])
+	const classifyList = ref([])
 
 
 	const goPreview = () => {
@@ -87,22 +87,30 @@
 
 	const getBanner = async () => {
 		let res = await apiGetBanner();
-		bannerList.value = res.data.data
+		bannerList.value = res.data
 	}
 
 	const getDayRadom = async () => {
 		let res = await apiGetDayRadom();
-		radomList.value = res.data.data
+		radomList.value = res.data
 	}
 
 	const getNotice = async () => {
 		let res = await apiGetNotice();
-		notice.value = res.data.data
+		notice.value = res.data
+	}
+	
+	const getClassify = async () => {
+		let res = await apiGetClassify({
+			select: true
+		});
+		classifyList.value = res.data
 	}
 
 	getBanner();
 	getDayRadom();
 	getNotice();
+	getClassify();
 </script>
 
 <style lang="scss" scoped>
