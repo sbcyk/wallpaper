@@ -25,7 +25,7 @@
 
 				<view class="box" @click="clickScore">
 					<uni-icons type="star" size="28"></uni-icons>
-					<view class="text">5分</view>
+					<view class="text">{{currentInfo.score}}分</view>
 				</view>
 
 				<view class="box">
@@ -49,39 +49,38 @@
 					<view class="content">
 						<view class="row">
 							<view class="label">壁纸ID：</view>
-							<text class="value" selectable>123523asdas4</text>
+							<text class="value" selectable>{{currentInfo._id}}</text>
 						</view>
 
-						<view class="row">
+						<!-- <view class="row">
 							<view class="label">分类：</view>
 							<text class="value class">明星美女</text>
-						</view>
+						</view> -->
 
 						<view class="row">
 							<text class="label">发布者：</text>
-							<view class="value">大鸡巴</view>
+							<view class="value">{{currentInfo.nickname}}</view>
 						</view>
 
 						<view class="row">
 							<text class="label">评分：</text>
 							<view class="value roteBox">
-								<uni-rate value="3.5" size="16" @change="onChange" readonly />
-								<text class="score">5分</text>
+								<uni-rate :value="currentInfo.score" size="16" @change="onChange" readonly />
+								<text class="score">{{currentInfo.score}}</text>
 							</view>
 						</view>
 
 						<view class="row">
 							<text class="label">摘要：</text>
 							<view class="value">
-								大鸡巴大鸡巴巴大鸡巴大鸡巴大鸡巴大鸡巴大鸡巴大鸡大鸡巴大鸡大鸡巴大大鸡巴大
-								鸡巴巴大鸡巴大鸡巴大鸡巴大鸡巴大鸡巴大鸡大鸡巴大鸡大鸡巴大
+								{{currentInfo.description}}
 							</view>
 						</view>
 
 						<view class="row">
 							<text class="label">标签：</text>
 							<view class="value tabs">
-								<view class="tab" v-for="item in 3">标签名</view>
+								<view class="tab" v-for="tab in currentInfo.tabs">{{tab}}</view>
 							</view>
 						</view>
 
@@ -98,19 +97,20 @@
 			<view class="scorePopup">
 				<view class="popHeader">
 					<view></view>
-					<view class="title">壁纸评分</view>
+					<view class="title">{{ isScored ? '评分过了' : '壁纸评分'}}</view>
 					<view class="close" @click="clickScoreClose">
 						<uni-icons type="closeempty" size="18" color="#999"></uni-icons>
 					</view>
 				</view>
 
 				<view class="content">
-					<uni-rate v-model="userScore" allowHalf :is-mask-click="false" />
+					<uni-rate v-model="userScore" allowHalf :is-mask-click="false" 
+					:disabled="isScored" disabled-color="#FFCA3E" />
 					<text class="text">{{ userScore }}分</text>
 				</view>
 
 				<view class="footer">
-					<button :disabled="!userScore" @click="submitScore" size="mini" plain>确认评分</button>
+					<button :disabled="!userScore || isScored" @click="submitScore" size="mini" plain>确认评分</button>
 				</view>
 			</view>
 		</uni-popup>
@@ -127,6 +127,9 @@
 	import {
 		getStatusBarHeight
 	} from '@/utils/system.js'
+	import {
+		apiSetUpScore
+	} from '/api/apis.js'
 
 	const maskState = ref(true);
 	const infoPopup = ref(null);
@@ -135,8 +138,9 @@
 	const classList = ref([])
 	const currentId = ref('')
 	const currentIndex = ref(0)
+	const currentInfo = ref(null)
+	const isScored = ref(false)
 	const readImgs = ref([])
-
 	const storageClassList = uni.getStorageSync('storageClassList') || [];
 
 	classList.value = storageClassList.map(item => {
@@ -149,6 +153,7 @@
 	onLoad((e) => {
 		currentId.value = e.id
 		currentIndex.value = classList.value.findIndex(item => item._id == currentId.value);
+		currentInfo.value = classList.value[currentIndex.value]
 		readImgsFun();
 	})
 
@@ -164,16 +169,42 @@
 
 	// 打开评分弹窗
 	const clickScore = () => {
+		if (currentInfo.value.userScore) {
+			isScored.value = true;
+			userScore.value = currentInfo.value.userScore;
+		}
 		scorePopup.value.open();
 	}
 	// 关闭评分弹窗
 	const clickScoreClose = () => {
 		scorePopup.value.close();
+		
+		userScore.value = 0;
+		isScored.value = false;
 	}
 
-	const submitScore = () => {
-		console.log(userScore.value)
-		// setTimeout(clickScoreClose(), 1000);
+	const submitScore = async () => {
+		// console.log(userScore.value)
+		uni.showLoading({
+			title: '加载中...'
+		})
+		
+		let {
+			classid,
+			_id: wallId
+		} = currentInfo.value
+		let res = await apiSetUpScore({classid, wallId, userScore: userScore.value})
+		// console.log(res.data)
+		uni.hideLoading()
+		if (res.errCode === 0) {
+			uni.showToast({
+				title: '评分成功',
+				icon: 'none'
+			})
+			classList.value[currentIndex.value].userScore = userScore.value
+			uni.setStorageSync('storageClassList', classList.value)
+			clickScoreClose();
+		}
 	}
 
 	// 切换遮罩状态
@@ -189,9 +220,10 @@
 	const swiperChange = (e) => {
 		// console.log(e)
 		currentIndex.value = e.detail.current
+		currentInfo.value = classList.value[currentIndex.value]
 		readImgsFun();
 	}
-	
+
 	const readImgsFun = () => {
 		readImgs.value.push(
 			currentIndex.value == 0 ? classList.value.length : currentIndex.value - 1,

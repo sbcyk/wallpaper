@@ -36,3 +36,10 @@ export function apiGetClassList(data = {}) {
 		data
 	})
 }
+
+export function apiSetUpScore(data = {}) {
+	return request({
+		url: '/setupScore',
+		data
+	})
+}
