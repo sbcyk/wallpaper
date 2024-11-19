@@ -53,7 +53,8 @@
 			<common-title>
 				<template #name>专题精选</template>
 				<template #custom>
-					<navigator url="" class="more">more</navigator>				</template>
+					<navigator url="" class="more">more</navigator>
+				</template>
 			</common-title>
 
 			<view class="content">
@@ -69,7 +70,15 @@
 		ref
 	} from 'vue';
 	import {
-		apiGetBanner, apiGetDayRadom, apiGetNotice, apiGetClassify
+		onShareAppMessage,
+		onShareTimeline,
+		onLoad
+	} from '@dcloudio/uni-app';
+	import {
+		apiGetBanner,
+		apiGetDayRadom,
+		apiGetNotice,
+		apiGetClassify
 	} from '../../api/apis.js';
 
 
@@ -84,6 +93,19 @@
 			url: "/pages/preview/preview"
 		})
 	}
+	
+	onShareAppMessage((e) => {
+		return {
+			title: 'iKe壁纸',
+			path: '/pages/classify/classify'
+		}
+	});
+	
+	onShareTimeline(() => {
+		return {
+			title: 'iKe壁纸'
+		}
+	});
 
 	const getBanner = async () => {
 		let res = await apiGetBanner();
@@ -99,7 +121,7 @@
 		let res = await apiGetNotice();
 		notice.value = res.data
 	}
-	
+
 	const getClassify = async () => {
 		let res = await apiGetClassify({
 			select: true

@@ -1,5 +1,5 @@
 <template>
-	<view class="preview">
+	<view class="preview" v-if="currentInfo">
 		<swiper circular :current="currentIndex" @change="swiperChange">
 			<swiper-item v-for="(item, index) in classList" :key="item._id">
 				<image v-if="readImgs.includes(index)" @click="maskChange" :src="item.picUrl" mode="aspectFill"></image>
@@ -80,7 +80,7 @@
 						<view class="row">
 							<text class="label">标签：</text>
 							<view class="value tabs">
-								<view class="tab" v-for="tab in currentInfo.tabs">{{tab}}</view>
+								<view class="tab" v-for="tab in currentInfo.tabs" :key="tab">{{tab}}</view>
 							</view>
 						</view>
 
@@ -104,8 +104,8 @@
 				</view>
 
 				<view class="content">
-					<uni-rate v-model="userScore" allowHalf :is-mask-click="false" 
-					:disabled="isScored" disabled-color="#FFCA3E" />
+					<uni-rate v-model="userScore" allowHalf :is-mask-click="false" :disabled="isScored"
+						disabled-color="#FFCA3E" />
 					<text class="text">{{ userScore }}分</text>
 				</view>
 
@@ -128,7 +128,8 @@
 		getStatusBarHeight
 	} from '@/utils/system.js'
 	import {
-		apiSetUpScore
+		apiSetUpScore,
+		apiDownloadWall
 	} from '/api/apis.js'
 
 	const maskState = ref(true);
@@ -138,9 +139,7 @@
 	const classList = ref([])
 	const currentId = ref('')
 	const currentIndex = ref(0)
-	const currentInfo = ref({
-		score: 0
-	})
+	const currentInfo = ref(null)
 	const isScored = ref(false)
 	const readImgs = ref([])
 	const storageClassList = uni.getStorageSync('storageClassList') || [];
@@ -180,7 +179,7 @@
 	// 关闭评分弹窗
 	const clickScoreClose = () => {
 		scorePopup.value.close();
-		
+
 		userScore.value = 0;
 		isScored.value = false;
 	}
@@ -190,12 +189,16 @@
 		uni.showLoading({
 			title: '加载中...'
 		})
-		
+
 		let {
 			classid,
 			_id: wallId
 		} = currentInfo.value
-		let res = await apiSetUpScore({classid, wallId, userScore: userScore.value})
+		let res = await apiSetUpScore({
+			classid,
+			wallId,
+			userScore: userScore.value
+		})
 		// console.log(res.data)
 		uni.hideLoading()
 		if (res.errCode === 0) {
@@ -234,77 +237,93 @@
 		)
 		readImgs.value = [...new Set(readImgs.value)];
 	}
-	
-	const clickDownload = () => {
+
+	const clickDownload = async () => {
 		// #ifdef H5
 		uni.showModal({
 			content: '请长按保存壁纸',
 			showCancel: false
 		})
 		// #endif
-		
+
 		// #ifndef H5
-		// console.log(currentInfo)
-		
-		uni.showLoading({
-			title: '下载中',
-			mask: true
-		})
-		
-		uni.getImageInfo({	
-			src: currentInfo.value.picUrl,
-			success: (res) => {
-				
-				uni.saveImageToPhotosAlbum({
-					filePath: res.path,
-					success: (res) => {
-						console.log(res)
-					},
-					fail: err => {
-						if (err.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
-							// 取消保存
-							uni.showToast({
-								title: '保存失败，请点击重新保存',
-								icon: 'none'
-							})
-							return;
-						} 
-						
-						// 拒绝授权
-						uni.showModal({
-							title: '提示',
-							content: '请授权保存相册',
-							success: res => {
-								if (res.confirm) {
-									// console.log('确认授权了')
-									uni.openSetting({
-										success: (setting) => {
-											// console.log(setting)
-											if (setting.authSetting['scope.writePhotosAlbum']) {
-												uni.showToast({
-													title: '获取授权成功',
-													icon: 'none'
-												})
-											} else {
-												uni.showToast({
-													title: '获取授权失败L',
-													icon: 'none'
-												})
-											}
-										}
-									})
-								}
+		try {
+			// console.log(currentInfo)
+			uni.showLoading({
+				title: '下载中',
+				mask: true
+			})
+
+			let {
+				classid,
+				_id: wallId
+			} = currentInfo.value
+
+			let res = await apiDownloadWall({
+				classid,
+				wallId
+			});
+			if (res.errCode != 0) throw res;
+
+			uni.getImageInfo({
+				src: currentInfo.value.picUrl,
+				success: (res) => {
+
+					uni.saveImageToPhotosAlbum({
+						filePath: res.path,
+						success: (res) => {
+							console.log(res)
+						},
+						fail: err => {
+							if (err.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
+								// 取消保存
+								uni.showToast({
+									title: '保存失败，请点击重新保存',
+									icon: 'none'
+								})
+								return;
 							}
-						})
-					},
-					complete: () => {
-						uni.hideLoading();
-					}
-				})
-			}
-		})
-		
-		
+
+							// 拒绝授权
+							uni.showModal({
+								title: '提示',
+								content: '请授权保存相册',
+								success: res => {
+									if (res.confirm) {
+										// console.log('确认授权了')
+										uni.openSetting({
+											success: (setting) => {
+												// console.log(setting)
+												if (setting
+													.authSetting[
+														'scope.writePhotosAlbum'
+													]) {
+													uni.showToast({
+														title: '获取授权成功',
+														icon: 'none'
+													})
+												} else {
+													uni.showToast({
+														title: '获取授权失败L',
+														icon: 'none'
+													})
+												}
+											}
+										})
+									}
+								}
+							})
+						},
+						complete: () => {
+							uni.hideLLoading();
+						}
+					})
+				}
+			})
+		} catch (err) {
+			console.log(err)
+			uni.hideLoading();
+		}
 		// #endif
 	}
 </script>
