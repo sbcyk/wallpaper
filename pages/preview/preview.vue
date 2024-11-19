@@ -28,7 +28,7 @@
 					<view class="text">{{currentInfo.score}}分</view>
 				</view>
 
-				<view class="box">
+				<view class="box" @click="clickDownload">
 					<uni-icons type="download" size="23"></uni-icons>
 					<view class="text">下载</view>
 				</view>
@@ -138,7 +138,9 @@
 	const classList = ref([])
 	const currentId = ref('')
 	const currentIndex = ref(0)
-	const currentInfo = ref(null)
+	const currentInfo = ref({
+		score: 0
+	})
 	const isScored = ref(false)
 	const readImgs = ref([])
 	const storageClassList = uni.getStorageSync('storageClassList') || [];
@@ -231,6 +233,79 @@
 			currentIndex.value >= classList.value.length ? 0 : currentIndex.value + 1
 		)
 		readImgs.value = [...new Set(readImgs.value)];
+	}
+	
+	const clickDownload = () => {
+		// #ifdef H5
+		uni.showModal({
+			content: '请长按保存壁纸',
+			showCancel: false
+		})
+		// #endif
+		
+		// #ifndef H5
+		// console.log(currentInfo)
+		
+		uni.showLoading({
+			title: '下载中',
+			mask: true
+		})
+		
+		uni.getImageInfo({	
+			src: currentInfo.value.picUrl,
+			success: (res) => {
+				
+				uni.saveImageToPhotosAlbum({
+					filePath: res.path,
+					success: (res) => {
+						console.log(res)
+					},
+					fail: err => {
+						if (err.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
+							// 取消保存
+							uni.showToast({
+								title: '保存失败，请点击重新保存',
+								icon: 'none'
+							})
+							return;
+						} 
+						
+						// 拒绝授权
+						uni.showModal({
+							title: '提示',
+							content: '请授权保存相册',
+							success: res => {
+								if (res.confirm) {
+									// console.log('确认授权了')
+									uni.openSetting({
+										success: (setting) => {
+											// console.log(setting)
+											if (setting.authSetting['scope.writePhotosAlbum']) {
+												uni.showToast({
+													title: '获取授权成功',
+													icon: 'none'
+												})
+											} else {
+												uni.showToast({
+													title: '获取授权失败L',
+													icon: 'none'
+												})
+											}
+										}
+									})
+								}
+							}
+						})
+					},
+					complete: () => {
+						uni.hideLoading();
+					}
+				})
+			}
+		})
+		
+		
+		// #endif
 	}
 </script>
 
