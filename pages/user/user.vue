@@ -60,17 +60,29 @@
 
 		<view class="section">
 			<view class="list">
-				<view class="row" v-for="item in list2" :key="item.name">
+				<navigator class="row" url="/pages/notice/detail?id=653507c6466d417a3718e94b">
 					<view class="left">
-						<uni-icons :type="item.icon" size="20"></uni-icons>
-						<view class="text">{{ item.value }}</view>
+						<uni-icons type="notification-filled" size="20"></uni-icons>
+						<view class="text">订阅更新</view>
 					</view>
 
 					<view class="right">
 						<!-- <view class="text">33</view> -->
 						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 					</view>
-				</view>
+				</navigator>
+				
+				<navigator class="row" url="/pages/notice/detail?id=6536358ce0ec19c8d67fbe82">
+					<view class="left">
+						<uni-icons type="flag-filled" size="20"></uni-icons>
+						<view class="text">常见问题</view>
+					</view>
+				
+					<view class="right">
+						<!-- <view class="text">33</view> -->
+						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
+					</view>
+				</navigator>
 			</view>
 		</view>
 	</view>
@@ -86,10 +98,6 @@
 	import{getNavBarHeight} from '@/utils/system.js';
 	import{apiUserInfo} from '@/api/apis.js'
 	
-	const list2 = ref([
-		{name: 'sub',value: '订阅更新',icon: 'notification-filled'},
-		{name: 'problem',value: '常见问题',icon: 'flag-filled'},
-	])
 	
 	const userInfo = ref(null)
 	
