@@ -88,6 +88,8 @@
 							声明：本图片来自用户投稿，非商业使用，用于免费学习交流，如侵犯了您的权益，
 							您可以拷贝壁纸ID举报至平台，邮箱1174773265@qq.com，管理将删除侵权壁纸，维护您的权益
 						</view>
+						
+						<view class="safe-area-inset-bottom"></view>
 					</view>
 				</scroll-view>
 			</view>
