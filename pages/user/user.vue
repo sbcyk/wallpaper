@@ -1,39 +1,40 @@
 <template>
-	<view class="userLayout pageBg">
+	<view class="userLayout pageBg" v-if="userInfo">
+		<view :style="{height: getNavBarHeight() + 'px'}"></view>
 		<view class="userInfo">
 			<view class="avatar">
 				<image src="../../static/images/xxmLogo.png" mode="aspectFill"></image>
 			</view>
 
-			<view class="ip">100.100.100.100</view>
+			<view class="ip">{{userInfo.IP}}</view>
 
-			<view class="address">来自于: 山东</view>
+			<view class="address">来自于: {{userInfo.address.city||userInfo.address.province||userInfo.address.country}}</view>
 		</view>
 		
 		
 
 		<view class="section">
 			<view class="list">
-				<navigator url="/pages/classlist/classlist" class="row">
+				<navigator url="/pages/classlist/classlist?name=我的下载&type=download" class="row">
 					<view class="left">
 						<uni-icons type="download-filled" size="20"></uni-icons>
 						<view class="text">我的下载</view>
 					</view>
 
 					<view class="right">
-						<view class="text">33</view>
+						<view class="text">{{userInfo.downloadSize}}</view>
 						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 					</view>
 				</navigator>
 				
-				<navigator url="/pages/classlist/classlist" class="row">
+				<navigator url="/pages/classlist/classlist?name=我的评分&type=score" class="row">
 					<view class="left">
 						<uni-icons type="star-filled" size="20"></uni-icons>
 						<view class="text">我的评分</view>
 					</view>
 				
 					<view class="right">
-						<view class="text">33</view>
+						<view class="text">{{userInfo.scoreSize}}</view>
 						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 					</view>
 				</navigator>
@@ -73,22 +74,39 @@
 			</view>
 		</view>
 	</view>
+	<view class="loadingLayout" v-else>
+		<view :style="{height: getNavBarHeight() + 'px'}"></view>
+		<uni-load-more status="loading"></uni-load-more>
+	</view>
 </template>
 <script setup>
 	import {
 		ref
 	} from 'vue';
+	import{getNavBarHeight} from '@/utils/system.js';
+	import{apiUserInfo} from '@/api/apis.js'
 	
 	const list2 = ref([
 		{name: 'sub',value: '订阅更新',icon: 'notification-filled'},
 		{name: 'problem',value: '常见问题',icon: 'flag-filled'},
 	])
 	
+	const userInfo = ref(null)
+	
+	const getUserInfo = () => {
+		apiUserInfo().then(res => {
+			console.log(res)
+			userInfo.value = res.data
+		})
+	}
+	
 	const clickContact = () => {
 		uni.makePhoneCall({
 			phoneNumber: "114"
 		})
 	}
+	
+	getUserInfo();
 </script>
 
 <style lang="scss" scoped>

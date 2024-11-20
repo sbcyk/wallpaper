@@ -25,7 +25,8 @@
 	} from 'vue';
 
 	import {
-		apiGetClassList
+		apiGetClassList,
+		apiHistoryWallList
 	} from "../../api/apis.js"
 	import {
 		onLoad,
@@ -48,12 +49,11 @@
 
 	onLoad((e) => {
 		// console.log(e)
-		let {
-			id = null, name = null
-		} = e;
-		if (!id) gotoHome();
+		let {id = null, name = null, type = null} = e;
+		if (type) queryParams.type = type;
+		if(id) queryParams.classid = id;
+		// if (!id) gotoHome();
 		
-		queryParams.classid = id;
 		pageName = name;
 
 		uni.setNavigationBarTitle({
@@ -73,8 +73,14 @@
 	const classlist = ref([])
 
 	const getClassList = async () => {
-		let res = await apiGetClassList(queryParams);
-		// console.log(res.data)
+		let res;
+		if (queryParams.classid) {
+			 res = await apiGetClassList(queryParams);
+		} else if (queryParams.type) {
+			console.log(queryParams)
+			 res = await apiHistoryWallList(queryParams);
+		}
+		
 		classlist.value = [...classlist.value, ...res.data] // 向下拼接
 		// 触底数据不足则不再请求
 		if (res.data.length < queryParams.pageSize) noData.value = true

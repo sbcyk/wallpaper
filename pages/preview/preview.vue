@@ -298,7 +298,10 @@
 					uni.saveImageToPhotosAlbum({
 						filePath: res.path,
 						success: (res) => {
-							console.log(res)
+							uni.showToast({
+								title: '保存成功',
+								icon: 'none'
+							})
 						},
 						fail: err => {
 							if (err.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
@@ -341,7 +344,7 @@
 							})
 						},
 						complete: () => {
-							uni.hideLLoading();
+							uni.hideLoading();
 						}
 					})
 				}
