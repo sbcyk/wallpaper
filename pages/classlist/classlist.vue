@@ -34,6 +34,9 @@
 		onShareTimeline,
 		onUnload
 	} from "@dcloudio/uni-app"
+	import {
+		gotoHome
+	} from "@/utils/common.js"
 
 	const queryParams = {
 		pageNum: 1,
@@ -48,6 +51,8 @@
 		let {
 			id = null, name = null
 		} = e;
+		if (!id) gotoHome();
+		
 		queryParams.classid = id;
 		pageName = name;
 

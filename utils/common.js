@@ -16,3 +16,18 @@ export function compareTimestamp(timestamp) {
 		return null;
 	}
 }
+
+export function gotoHome() {
+	uni.showModal({
+		title: '提示',
+		content: '页面有误，将返回首页',
+		showCancel: false,
+		success: (res) => {
+			if (res.confirm) {
+				uni.reLaunch({
+					url: '/pages/index/index'
+				})
+			}
+		}
+	})
+}
