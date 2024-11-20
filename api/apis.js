@@ -78,3 +78,10 @@ export function apiGetNoticeDetail(data = {}) {
 		data
 	})
 }
+
+export function apiSearchWall(data = {}) {
+	return request({
+		url: '/searchWall',
+		data
+	})
+}
