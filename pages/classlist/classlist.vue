@@ -3,17 +3,18 @@
 		<view class="loadingLayout" v-if="!classlist.length && !noData">
 			<uni-load-more status="loading"></uni-load-more>
 		</view>
-		
+
 		<view class="content">
-			<navigator :url="`/pages/preview/preview?id=${item._id}`" class="item" v-for="item in classlist" :key="item._id">
+			<navigator :url="`/pages/preview/preview?id=${item._id}`" class="item" v-for="item in classlist"
+				:key="item._id">
 				<image :src="item.smallPicurl" mode="aspectFill"></image>
 			</navigator>
 		</view>
-		
+
 		<view class="loadingLayout" v-if="noData || classlist.length">
 			<uni-load-more :status="noData ? 'noMore' : 'loading'"></uni-load-more>
 		</view>
-		
+
 		<view class="safe-area-inset-bottom"></view>
 	</view>
 </template>
@@ -27,32 +28,40 @@
 		apiGetClassList
 	} from "../../api/apis.js"
 	import {
-		onLoad, onReachBottom
+		onLoad,
+		onReachBottom,
+		onShareAppMessage,
+		onShareTimeline,
+		onUnload
 	} from "@dcloudio/uni-app"
-	
+
 	const queryParams = {
 		pageNum: 1,
 		pageSize: 12
 	}
-	
+	let pageName;
+
 	const noData = ref(false)
-	
+
 	onLoad((e) => {
 		// console.log(e)
-		let {id = null, name = null} = e;
+		let {
+			id = null, name = null
+		} = e;
 		queryParams.classid = id;
-		
+		pageName = name;
+
 		uni.setNavigationBarTitle({
 			title: name
 		})
-		
+
 		getClassList();
 	})
-	
+
 	onReachBottom(() => {
 		if (noData.value) return;
-		
-		queryParams.pageNum ++;
+
+		queryParams.pageNum++;
 		getClassList();
 	})
 
@@ -61,13 +70,31 @@
 	const getClassList = async () => {
 		let res = await apiGetClassList(queryParams);
 		// console.log(res.data)
-		classlist.value = [...classlist.value, ...res.data]	// 向下拼接
+		classlist.value = [...classlist.value, ...res.data] // 向下拼接
 		// 触底数据不足则不再请求
 		if (res.data.length < queryParams.pageSize) noData.value = true
-		
+
 		// 缓存图片
 		uni.setStorageSync('storageClassList', classlist.value)
 	}
+
+	onShareAppMessage((e) => {
+		return {
+			title: 'iKe精选@',
+			path: `/pages/classlist/classlist?id=${queryParams.classid}&name=${pageName}`
+		}
+	});
+
+	onShareTimeline(() => {
+		return {
+			title: 'iKe精选@'
+		}
+	});
+	
+	
+	onUnload(() => {
+		uni.removeStorageSync('storageClassList')
+	})
 </script>
 
 <style lang="scss" scoped>

@@ -42,7 +42,7 @@
 			</common-title>
 			<view class="content">
 				<scroll-view scroll-x>
-					<view class="box" v-for="item in radomList" :key="item._id" @click="goPreview()">
+					<view class="box" v-for="item in radomList" :key="item._id" @click="goPreview(item._id)">
 						<image :src="item.smallPicurl" mode="aspectFill"></image>
 					</view>
 				</scroll-view>
@@ -71,8 +71,7 @@
 	} from 'vue';
 	import {
 		onShareAppMessage,
-		onShareTimeline,
-		onLoad
+		onShareTimeline
 	} from '@dcloudio/uni-app';
 	import {
 		apiGetBanner,
@@ -88,9 +87,11 @@
 	const classifyList = ref([])
 
 
-	const goPreview = () => {
+	const goPreview = (id) => {
+		uni.setStorageSync('storageClassList', radomList.value)
+		
 		uni.navigateTo({
-			url: "/pages/preview/preview"
+			url: `/pages/preview/preview?id=${id}`
 		})
 	}
 	
@@ -128,7 +129,7 @@
 		});
 		classifyList.value = res.data
 	}
-
+	
 	getBanner();
 	getDayRadom();
 	getNotice();

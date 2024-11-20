@@ -50,3 +50,10 @@ export function apiDownloadWall(data = {}) {
 		data
 	})
 }
+
+export function apiDetailWall(data = {}) {
+	return request({
+		url: '/detailWall',
+		data
+	})
+}

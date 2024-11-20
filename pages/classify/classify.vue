@@ -16,6 +16,10 @@
 	import {
 		apiGetClassify
 	} from '../../api/apis.js';
+	import {
+		onShareAppMessage,
+		onShareTimeline
+	} from '@dcloudio/uni-app';
 
 	const classifyList = ref([])
 
@@ -26,6 +30,19 @@
 		console.log(res)
 		classifyList.value = res.data
 	}
+	
+	onShareAppMessage((e) => {
+		return {
+			title: 'iKe精选分类',
+			path: '/pages/classify/classify'
+		}
+	});
+	
+	onShareTimeline(() => {
+		return {
+			title: 'iKe精选分类'
+		}
+	});
 
 	getClassify();
 </script>

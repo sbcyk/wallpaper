@@ -122,14 +122,18 @@
 		ref
 	} from 'vue';
 	import {
-		onLoad
+		onLoad,
+		onShareAppMessage,
+		onShareTimeline,
+		onUnload
 	} from '@dcloudio/uni-app'
 	import {
 		getStatusBarHeight
 	} from '@/utils/system.js'
 	import {
 		apiSetUpScore,
-		apiDownloadWall
+		apiDownloadWall,
+		apiDetailWall
 	} from '/api/apis.js'
 
 	const maskState = ref(true);
@@ -151,8 +155,21 @@
 		}
 	});
 
-	onLoad((e) => {
+	onLoad(async (e) => {
 		currentId.value = e.id
+		if (e.type == 'share') {
+			// 来自分享
+			let res = await apiDetailWall({
+				id: currentId.value
+			})
+			console.log(res.data)
+			classList.value = res.data.map(item => {
+				return {
+					...item,
+					picUrl: item.smallPicurl.replace('_small.webp', '.jpg')
+				}
+			})
+		}
 		currentIndex.value = classList.value.findIndex(item => item._id == currentId.value);
 		currentInfo.value = classList.value[currentIndex.value]
 		readImgsFun();
@@ -219,7 +236,14 @@
 
 	// 返回上级
 	const goBack = () => {
-		uni.navigateBack()
+		uni.navigateBack({
+			success: () => {},
+			fail: (err) => {
+				uni.reLaunch({
+					url: '/pages/index/index'
+				})
+			}
+		})
 	}
 
 	const swiperChange = (e) => {
@@ -304,7 +328,7 @@
 													})
 												} else {
 													uni.showToast({
-														title: '获取授权失败L',
+														title: '获取授权失败',
 														icon: 'none'
 													})
 												}
@@ -326,6 +350,20 @@
 		}
 		// #endif
 	}
+
+	onShareAppMessage((e) => {
+		return {
+			title: 'iKe精选@',
+			path: `/pages/preview/preview?id=${currentId.value}&type=share`
+		}
+	});
+
+	onShareTimeline(() => {
+		return {
+			title: 'iKe精选@',
+			query: `id=${currentId.value}`
+		}
+	});
 </script>
 
 <style lang="scss" scoped>
